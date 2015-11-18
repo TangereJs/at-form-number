@@ -11,6 +11,7 @@ at-form-number represents an input element on the form
     .hide-label {
       display: none;
     }
+
     #labelContainer > label {
       font-weight: bold;
     }
@@ -34,12 +35,12 @@ at-form-number represents an input element on the form
     is: 'at-form-number',
     properties: {
       /**
-       * @property value
-       * Element's required status for element validation purposes
        * notify: true outside world should be notified that element's value has changed
        * this is achieved via autoamtic value-changed event
        * observer: 'valueChanged' outside world should be able to set/update the element's value
        * component is notified about this via valueChanged callback function
+       * @property value
+       * @default empty
        */
       value: {
         type: String,
@@ -48,9 +49,10 @@ at-form-number represents an input element on the form
         observer: 'valueChanged'
       },
       /**
+       * Hides title when true
        * @property hideTitle
+       * @default false
        */
-
       hideTitle: {
         type: Boolean,
         value: false,
@@ -110,7 +112,12 @@ at-form-number represents an input element on the form
         value: ''
       }
     },
-
+    $meta: {
+      title: "Number",
+      form: {
+        type: "number"
+      }
+    },
     _isReady: false,
     _scopeCssViaAttr: true,
     hideTitleChanged: function(newValue, oldValue) {
@@ -144,8 +151,8 @@ at-form-number represents an input element on the form
       }
     },
 
-    focus: function () {
-        this.$.input.focus();
+    focus: function() {
+      this.$.input.focus();
     },
 
     valueChanged: function(newValue, oldValue) {
