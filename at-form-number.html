@@ -50,13 +50,13 @@ at-form-number represents an input element on the form
       },
       /**
        * Hides title when true
-       * @property hideTitle
+       * @property hideLabel
        * @default false
        */
-      hideTitle: {
+      hideLabel: {
         type: Boolean,
         value: false,
-        observer: 'hideTitleChanged'
+        observer: 'hideLabelChanged'
       },
 
       /**
@@ -118,7 +118,7 @@ at-form-number represents an input element on the form
     }],
     _isReady: false,
     _scopeCssViaAttr: true,
-    hideTitleChanged: function(newValue, oldValue) {
+    hideLabelChanged: function(newValue, oldValue) {
       this.toggleClass("hide-label", newValue, this.$.labelContainer);
     },
     ready: function() {
