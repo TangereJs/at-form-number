@@ -1,9 +1,9 @@
 <link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../at-core-theme/at-core-theme.html" />
-
+<link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
 <!--
 @element at-form-number
-at-form-number represents an input element on the form
+at-form-number represents an input type=number element on the form
 -->
 
 <dom-module id="at-form-number">
@@ -15,6 +15,26 @@ at-form-number represents an input element on the form
     #labelContainer > label {
       font-weight: bold;
     }
+
+    :host {
+      --error-color: #e41e2b;
+    }
+
+    .label-container.error {
+      color: var(--error-color);
+    }
+
+    .hint-container.error {
+      color: var(--error-color);
+    }
+
+    #contentContainer.field {
+      margin: 0;
+    }
+
+    #contentContainer.field.error {
+      margin: 0 0 2px;
+    }
   </style>
   <template>
     <at-core-theme></at-core-theme>
@@ -22,8 +42,11 @@ at-form-number represents an input element on the form
       <div class="" id="labelContainer">
         <label id="label">{{label}}</label>
       </div>
-      <div id="field" class="field">
+      <div id="contentContainer" class="field">
         <input id="input" name$="{{name}}" type="number" placeholder$="{{placeholder}}" />
+      </div>
+      <div id="hintContainer" class="hint-container">
+        <p id="errorHtml" class="hint"></p>
       </div>
     </div>
   </template>
@@ -33,6 +56,7 @@ at-form-number represents an input element on the form
   "use strict";
   Polymer({
     is: 'at-form-number',
+    behaviors: [AtFormBehaviors.AtFormBehaviorsValidation],
     properties: {
       /**
        * notify: true outside world should be notified that element's value has changed
@@ -60,23 +84,12 @@ at-form-number represents an input element on the form
       },
 
       /**
-       * Element's valid state for element validation purposes
-       * notify: true - outside world should be notified when element's valid state changes
-       * readOnly: true - outside world is not able to change element's status since its element's internal state
-       */
-      valid: {
-        type: Boolean,
-        value: true,
-        readOnly: true,
-        notify: true
-      },
-
-      /**
        * Element's required state for element validation purposes
        */
       required: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'requiredChanged'
       },
 
       /**
@@ -127,40 +140,44 @@ at-form-number represents an input element on the form
       title: "Number",
       type: "number"
     }],
-    _isReady: false,
     _scopeCssViaAttr: true,
     hideChanged: function (newValue, oldValue) {
       var wrapper = Polymer.dom(this.root).querySelector('.ui.form');
       this.toggleClass('hidden', newValue, wrapper);
+      if (this._isReady) {
+        this.validate();
+      }
     },
     hideLabelChanged: function(newValue, oldValue) {
       this.toggleClass("hidden", newValue, this.$.labelContainer);
     },
     ready: function() {
-      var _self = this;
+      this._isReady = false;
+
+      var self = this;
+      var valueProvider = self.$.input;
       this.$.input.addEventListener('change', function(e) {
         e.stopPropagation();
-        _self.value = _self.$.input.value;
+        self.value = valueProvider.value;
       });
       this.$.input.addEventListener('blur', function(e) {
         e.stopPropagation();
-        _self.value = _self.$.input.value;
-        _self.validate();
+        self.validate();
       });
-      // update the initial valid state of the element
-      // if the element is required but empty valid state should be false
-      // but no visual indication should be shown
-      this._updateValidState();
 
       this._isReady = true;
     },
 
-    disabledChanged: function() {
-      this.toggleAttribute('disabled', this.disabled, this.$.input);
-      if (this.disabled) {
-        this.toggleClass('error', false, this.$.field);
-      } else {
-        this.toggleClass('error', !this.valid, this.$.field);
+    disabledChanged: function(newValue, oldValue) {
+      if (this._isReady) {
+        this.toggleAttribute('disabled', newValue, this.$.input);
+        this.validate();
+      }
+    },
+
+    requiredChanged: function (newValue, oldValue) {
+      if (this._isReady) {
+        this.validate();
       }
     },
 
@@ -172,28 +189,18 @@ at-form-number represents an input element on the form
       this.$.input.value = newValue;
       // when value changes due to user input or its changed programmatically
       // valid state should be updated and visual indication displayed
-      this.validate();
+      if (this._isReady) {
+        this.validate();
+      }
     },
 
-    /*
-     * This function updates the element's valid state without showing the visual indication
-     */
-    _updateValidState: function() {
-      var valueToValidate = this.value.trim ? this.value.trim() : this.value;
-      var validState = this.required ? valueToValidate !== '' : true;
-
-      this._setValid(validState);
-
-      return validState;
-    },
-
-    /*
-     * This function updates the element's valid state and shows the visual indication if needed
-     */
-    validate: function() {
-      var validState = this._updateValidState();
-      this.toggleClass('error', !validState, this.$.field);
-      return validState;
+    _updateUIValidState: function(isValid) {
+      var labelContainer = this.$.labelContainer;
+      this.toggleClass('error', !isValid, labelContainer);
+      var contentContainer = this.$.contentContainer;
+      this.toggleClass('error', !isValid, contentContainer);
+      var hintContainer = this.$.hintContainer;
+      this.toggleClass('error', !isValid, hintContainer);
     }
   });
 </script>
