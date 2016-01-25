@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer.html" />
-<link rel="import" href="../at-core-theme/at-core-theme.html" />
+<link rel="import" href="../at-theme/at-theme.html" />
 <link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
 <!--
 @element at-form-number
@@ -7,37 +7,37 @@ at-form-number represents an input type=number element on the form
 -->
 
 <dom-module id="at-form-number">
-  <style>
-    .hidden {
-      display: none;
-    }
-
-    #labelContainer > label {
-      font-weight: bold;
-    }
-
-    :host {
-      --error-color: #e41e2b;
-    }
-
-    .label-container.error {
-      color: var(--error-color);
-    }
-
-    .hint-container.error {
-      color: var(--error-color);
-    }
-
-    #contentContainer.field {
-      margin: 0;
-    }
-
-    #contentContainer.field.error {
-      margin: 0 0 2px;
-    }
-  </style>
   <template>
-    <at-core-theme></at-core-theme>
+    <style>
+      .hidden {
+        display: none;
+      }
+      
+      #labelContainer > label {
+        font-weight: bold;
+      }
+      
+      :host {
+        --error-color: #e41e2b;
+      }
+      
+      .label-container.error {
+        color: var(--error-color);
+      }
+      
+      .hint-container.error {
+        color: var(--error-color);
+      }
+      
+      #contentContainer.field {
+        margin: 0;
+      }
+      
+      #contentContainer.field.error {
+        margin: 0 0 2px;
+      }
+    </style>
+
     <div class="ui form">
       <div class="" id="labelContainer">
         <label id="label">{{label}}</label>
@@ -148,19 +148,19 @@ at-form-number represents an input type=number element on the form
         this.validate();
       }
     },
-    hideLabelChanged: function(newValue, oldValue) {
+    hideLabelChanged: function (newValue, oldValue) {
       this.toggleClass("hidden", newValue, this.$.labelContainer);
     },
-    ready: function() {
+    ready: function () {
       this._isReady = false;
 
       var self = this;
       var valueProvider = self.$.input;
-      this.$.input.addEventListener('change', function(e) {
+      this.$.input.addEventListener('change', function (e) {
         e.stopPropagation();
         self.value = valueProvider.value;
       });
-      this.$.input.addEventListener('blur', function(e) {
+      this.$.input.addEventListener('blur', function (e) {
         e.stopPropagation();
         self.validate();
       });
@@ -168,7 +168,7 @@ at-form-number represents an input type=number element on the form
       this._isReady = true;
     },
 
-    disabledChanged: function(newValue, oldValue) {
+    disabledChanged: function (newValue, oldValue) {
       if (this._isReady) {
         this.toggleAttribute('disabled', newValue, this.$.input);
         this.validate();
@@ -181,11 +181,11 @@ at-form-number represents an input type=number element on the form
       }
     },
 
-    focus: function() {
+    focus: function () {
       this.$.input.focus();
     },
 
-    valueChanged: function(newValue, oldValue) {
+    valueChanged: function (newValue, oldValue) {
       this.$.input.value = newValue;
       // when value changes due to user input or its changed programmatically
       // valid state should be updated and visual indication displayed
@@ -194,7 +194,7 @@ at-form-number represents an input type=number element on the form
       }
     },
 
-    _updateUIValidState: function(isValid) {
+    _updateUIValidState: function (isValid) {
       var labelContainer = this.$.labelContainer;
       this.toggleClass('error', !isValid, labelContainer);
       var contentContainer = this.$.contentContainer;
