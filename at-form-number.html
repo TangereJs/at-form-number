@@ -9,19 +9,22 @@ at-form-number represents an input type=number element on the form
 <dom-module id="at-form-number">
   <template>
     <style is="custom-style">
+      :host * {
+        box-sizing: border-box;
+      }
+
       :host {
         cursor: auto;
         margin: 0;
         padding: 0;
         min-width: 278px;
         background: #f9f9f9;
-        font-family: 'Segoe UI', 'Segoe WP', 'Roboto', 'Frutiger', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 14px;
         line-height: 1.5;
         color: #212121;
       }
 
       :host input[type="number"] {
+        @apply(--at-default-font)
         margin: 0em;
         outline: none;
         -webkit-appearance: none;
@@ -50,15 +53,12 @@ at-form-number represents an input type=number element on the form
         display: none;
       }
 
-      .error {
-        color: var(--at-error-color);
-      }
+      .error { }
 
       .disabled {}
 
       :host .at-container {
-        position: relative;
-        max-width: 100%;
+        @apply(--at-element);
       }
 
       :host .at-container {}
@@ -66,42 +66,42 @@ at-form-number represents an input type=number element on the form
       :host .at-container.error {}
 
       :host .at-container.disabled {
-        opacity: 0.5;
+        @apply(--at-element-disabled);
       }
 
       :host .at-container .at-label-container {}
 
-      :host .at-container .at-label-container.error {}
+      :host .at-container .at-label-container.error {
+        @apply(--at-element-label-error);
+      }
 
       :host .at-container .at-label-container.disabled {}
 
       :host .at-container .at-label-container .at-label {
-        font-weight: bold;
+        @apply(--at-element-label);
       }
 
       :host .at-container .at-content-container {}
 
-      :host .at-container .at-content-container.error {}
-
-      :host .at-container .at-content-container.disabled {
+      :host .at-container .at-content-container.error {
+        @apply(--at-element-error-margins);
       }
 
-      :host .at-container .at-content-container .at-content-number {
-        width: 100%;
-        vertical-align: top;
+      :host .at-container .at-content-container.disabled { }
+
+      :host .at-container .at-content-container .at-content {
+        @apply(--at-element-content);
       }
 
-      :host .at-container .at-content-container.error .at-content-number {
-        background: #fff0f0;
-        color: #e41e2b;
-        border-color: #dbb1b1;
-        border-radius: 0em 2px 2px 0em;
-        box-shadow: 2px 0em 0em 0em #e41e2b inset;
+      :host .at-container .at-content-container.error .at-content {
+        @apply(--at-element-content-error);
       }
 
       :host .at-container .at-hint-container {}
 
-      :host .at-container .at-hint-container.error {}
+      :host .at-container .at-hint-container.error {
+        @apply(--at-element-hint-error);
+      }
 
       :host .at-container .at-hint-container.disabled {}
 
@@ -113,7 +113,7 @@ at-form-number represents an input type=number element on the form
         <label id="label" class="at-label">{{label}}</label>
       </div>
       <div id="contentContainer" class="at-content-container">
-        <input id="input" class="at-content-number" name$="{{name}}" type="number" placeholder$="{{placeholder}}" />
+        <input id="input" class="at-content" name$="{{name}}" type="number" placeholder$="{{placeholder}}" />
       </div>
       <div id="hintContainer" class="at-hint-container">
         <p id="errorHtml" class="at-hint"></p>
