@@ -21,6 +21,31 @@ at-form-number represents an input type=number element on the form
         color: #212121;
       }
 
+      :host input[type="number"] {
+        margin: 0em;
+        outline: none;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+        line-height: 1.2142em;
+        padding: 0.67861em 1em;
+        font-size: 1em;
+        background: #ffffff;
+        border: 1px solid rgba(39, 41, 43, 0.15);
+        color: #212121;
+        border-radius: 2px;
+        box-shadow: 0em 0em 0em 0em transparent inset;
+        -webkit-transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      :host input[type="number"]:focus {
+        color: rgba(0, 0, 0, 0.85);
+        border-color: rgba(39, 41, 43, 0.3);
+        border-radius: 0em 2px 2px 0em;
+        background: #ffffff;
+        box-shadow: 1px 0em 0em 0em rgba(39, 41, 43, 0.3) inset;
+      }
+
       .hidden {
         display: none;
       }
@@ -29,62 +54,58 @@ at-form-number represents an input type=number element on the form
         color: var(--at-error-color);
       }
 
-      .disabled {
-
-      }
+      .disabled {}
 
       :host .at-container {
         position: relative;
         max-width: 100%;
       }
 
-      :host .at-container .at-label-container {
+      :host .at-container {}
 
+      :host .at-container.error {}
+
+      :host .at-container.disabled {
+        opacity: 0.5;
       }
 
-      :host .at-container .at-label-container.error {
+      :host .at-container .at-label-container {}
 
-      }
+      :host .at-container .at-label-container.error {}
 
-      :host .at-container .at-label-container.disabled {
-
-      }
+      :host .at-container .at-label-container.disabled {}
 
       :host .at-container .at-label-container .at-label {
         font-weight: bold;
       }
 
-      :host .at-container .at-content-container {
+      :host .at-container .at-content-container {}
 
-      }
-
-      :host .at-container .at-content-container.error {
-
-      }
+      :host .at-container .at-content-container.error {}
 
       :host .at-container .at-content-container.disabled {
-
       }
 
       :host .at-container .at-content-container .at-content-number {
-
+        width: 100%;
+        vertical-align: top;
       }
 
-      :host .at-container .at-hint-container {
-
+      :host .at-container .at-content-container.error .at-content-number {
+        background: #fff0f0;
+        color: #e41e2b;
+        border-color: #dbb1b1;
+        border-radius: 0em 2px 2px 0em;
+        box-shadow: 2px 0em 0em 0em #e41e2b inset;
       }
 
-      :host .at-container .at-hint-container.error {
+      :host .at-container .at-hint-container {}
 
-      }
+      :host .at-container .at-hint-container.error {}
 
-      :host .at-container .at-hint-container.disabled {
+      :host .at-container .at-hint-container.disabled {}
 
-      }
-
-      :host .at-container .at-hint-container .at-hint {
-
-      }
+      :host .at-container .at-hint-container .at-hint {}
     </style>
 
     <div id="atContainer" class="at-container">
@@ -190,27 +211,27 @@ at-form-number represents an input type=number element on the form
       type: "number"
     }],
     _scopeCssViaAttr: true,
-    hideChanged: function (newValue, oldValue) {
+    hideChanged: function(newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('hidden', newValue, atContainer);
       if (this._isReady) {
         this.validate();
       }
     },
-    hideLabelChanged: function (newValue, oldValue) {
+    hideLabelChanged: function(newValue, oldValue) {
       var labelContainer = this.$.labelContainer;
       this.toggleClass("hidden", newValue, labelContainer);
     },
-    ready: function () {
+    ready: function() {
       this._isReady = false;
 
       var self = this;
       var valueProvider = self.$.input;
-      this.$.input.addEventListener('change', function (e) {
+      this.$.input.addEventListener('change', function(e) {
         e.stopPropagation();
         self.value = valueProvider.value;
       });
-      this.$.input.addEventListener('blur', function (e) {
+      this.$.input.addEventListener('blur', function(e) {
         e.stopPropagation();
         self.validate();
       });
@@ -218,24 +239,27 @@ at-form-number represents an input type=number element on the form
       this._isReady = true;
     },
 
-    disabledChanged: function (newValue, oldValue) {
+    disabledChanged: function(newValue, oldValue) {
       if (this._isReady) {
-        this.toggleAttribute('disabled', newValue, this.$.input);
+        var container = this.$.atContainer;
+        this.toggleClass('disabled', newValue, container);
+        var input = this.$.input;
+        this.toggleAttribute('disabled', newValue, input);
         this.validate();
       }
     },
 
-    requiredChanged: function (newValue, oldValue) {
+    requiredChanged: function(newValue, oldValue) {
       if (this._isReady) {
         this.validate();
       }
     },
 
-    focus: function () {
+    focus: function() {
       this.$.input.focus();
     },
 
-    valueChanged: function (newValue, oldValue) {
+    valueChanged: function(newValue, oldValue) {
       this.$.input.value = newValue;
       // when value changes due to user input or its changed programmatically
       // valid state should be updated and visual indication displayed
@@ -244,7 +268,7 @@ at-form-number represents an input type=number element on the form
       }
     },
 
-    _updateUIValidState: function (isValid) {
+    _updateUIValidState: function(isValid) {
       var labelContainer = this.$.labelContainer;
       this.toggleClass('error', !isValid, labelContainer);
       var contentContainer = this.$.contentContainer;
