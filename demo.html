@@ -46,15 +46,14 @@
     </p>
   </div>
   <div>
-    <h4>Example 4: required and value set programmatically</h4>
-    <p>Value being set is whitespace <code>"          "</code> </p>
+    <h4>Example 4: required</h4>    
     <p>
       <at-form-number id="programmatic1" name="pera" type="text" label="This is required input" placeholder="this is placeholder..." required></at-form-number>
     </p>
   </div>
   <div>
-    <h4>Example 5: required and value set programmatically</h4>
-    <p>Value being set is not whitespace <code>"this is not whitespace"</code> </p>
+    <h4>Example 5: invalid value set programmatically</h4>
+    <p>Value being set is <code>"abc"</code> </p>
     <p>
       <at-form-number id="programmatic2" name="pera" type="text" label="This is required input" placeholder="this is placeholder..." required></at-form-number>
     </p>
@@ -73,12 +72,13 @@
         valueEcho.innerHTML = e.detail.value;
       });
 
-      var programmatic = document.getElementById('programmatic1');
-      programmatic.value = "                   ";
-      programmatic.value = "          ";
+      var programmatic = document.getElementById('programmatic1');      
+      programmatic.value = "";
+      programmatic.validate();
 
       var programmatic2 = document.getElementById('programmatic2');
-      programmatic2.value = "This is not whitespace";
+      programmatic2.value = "abc";
+      programmatic2.validate();
     });
   </script>
 </body>

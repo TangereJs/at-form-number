@@ -100,7 +100,7 @@ at-form-number represents an input type=number element on the form
         <input id="input" class="at-content" name$="{{name}}" type="number" placeholder$="{{placeholder}}" />
       </div>
       <div id="hintContainer" class="at-hint-container">
-        <p id="errorHtml" class="at-hint"></p>
+        <div id="errorHtml" class="at-hint"></div>
       </div>
     </div>
   </template>
@@ -194,7 +194,7 @@ at-form-number represents an input type=number element on the form
       title: "Number",
       type: "number"
     }],
-    _scopeCssViaAttr: true,
+    
     hideChanged: function(newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('hidden', newValue, atContainer);
@@ -224,11 +224,13 @@ at-form-number represents an input type=number element on the form
     },
 
     disabledChanged: function(newValue, oldValue) {
+      
+      var container = this.$.atContainer;
+      this.toggleClass('disabled', newValue, container);
+      var input = this.$.input;
+      this.toggleAttribute('disabled', newValue, input);
+      
       if (this._isReady) {
-        var container = this.$.atContainer;
-        this.toggleClass('disabled', newValue, container);
-        var input = this.$.input;
-        this.toggleAttribute('disabled', newValue, input);
         this.validate();
       }
     },
