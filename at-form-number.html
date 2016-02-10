@@ -8,6 +8,7 @@ at-form-number represents an input type=number element on the form
 
 <dom-module id="at-form-number">
   <template>
+    <style include="at-form-common">
     <style>
       :host * {
         box-sizing: border-box;
@@ -16,92 +17,14 @@ at-form-number represents an input type=number element on the form
       :host {
         @apply(--at-form-host);
       }
-
-      #input {
-        @apply(--at-form-input-common);
-      }
-
-      #input:focus {
-        @apply(--at-form-input-focus);
-      }
-
-      #input::-webkit-input-placeholder {
-        @apply(--at-form-input-placeholder);
-      }
-
-      #input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        @apply(--at-form-input-placeholder);
-      }
-
-      #input::-moz-placeholder { /* Mozilla Firefox 19+ */
-        @apply(--at-form-input-placeholder);
-      }
-
-      #input:-ms-input-placeholder { /* Internet Explorer 10-11 */
-        @apply(--at-form-input-placeholder);
-      }
-
-      #contentContainer.error #input::-webkit-input-placeholder {
-        @apply(--at-form-input-placeholder-error);
-      }
-
-      #contentContainer.error #input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        @apply(--at-form-input-placeholder-error);
-        opacity:  1;
-      }
-
-      #contentContainer.error #input::-moz-placeholder { /* Mozilla Firefox 19+ */
-        @apply(--at-form-input-placeholder-error);
-        opacity:  1;
-      }
-
-      #contentContainer.error #input:-ms-input-placeholder { /* Internet Explorer 10-11 */
-        @apply(--at-form-input-placeholder-error);
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      .error {
-        color: var(--at-error-color);
-      }
-
-      .disabled {
-        @apply(--at-form-disabled);
-      }
-
-      #atContainer {
-        @apply(--at-form-element);
-      }
-
-      #label {
-        @apply(--at-form-label);
-      }
-
-      #contentContainer.error {
-        @apply(--at-form-error-margins);
-      }
-
-      #contentContainer.error #input {
-        @apply(--at-form-content-error);
-      }
-
-      #errorHtml {
-        @apply(--at-form-error-font);
-      }
     </style>
 
     <div id="atContainer" class="at-container">
-      <div id="labelContainer" class="at-label-container">
-        <label id="label" class="at-label">{{label}}</label>
-      </div>
+      <iron-label id="label" for="input">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
-        <input id="input" class="at-content" name$="{{name}}" type="number" placeholder$="{{placeholder}}" />
+        <input id="input" class="at-content has-placeholder" name$="{{name}}" type="number" placeholder$="{{placeholder}}">
       </div>
-      <div id="hintContainer" class="at-hint-container">
-        <div id="errorHtml" class="at-hint"></div>
-      </div>
+      <div id="hint"></div>
     </div>
   </template>
 </dom-module>
@@ -123,7 +46,6 @@ at-form-number represents an input type=number element on the form
       value: {
         type: Number,
         value: '',
-        notify: true,
         observer: 'valueChanged'
       },
       /**
@@ -194,7 +116,7 @@ at-form-number represents an input type=number element on the form
       title: "Number",
       type: "number"
     }],
-    
+
     hideChanged: function(newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('hidden', newValue, atContainer);
@@ -214,6 +136,8 @@ at-form-number represents an input type=number element on the form
       this.$.input.addEventListener('change', function(e) {
         e.stopPropagation();
         self.value = valueProvider.value;
+        self.validate();
+        self.fire('value-changed', { value: self.value });
       });
       this.$.input.addEventListener('blur', function(e) {
         e.stopPropagation();
@@ -224,12 +148,12 @@ at-form-number represents an input type=number element on the form
     },
 
     disabledChanged: function(newValue, oldValue) {
-      
+
       var container = this.$.atContainer;
       this.toggleClass('disabled', newValue, container);
       var input = this.$.input;
       this.toggleAttribute('disabled', newValue, input);
-      
+
       if (this._isReady) {
         this.validate();
       }
@@ -255,12 +179,12 @@ at-form-number represents an input type=number element on the form
     },
 
     _updateUIValidState: function(isValid) {
-      var labelContainer = this.$.labelContainer;
-      this.toggleClass('error', !isValid, labelContainer);
+      var label = this.$.label;
+      this.toggleClass('error', !isValid, label);
       var contentContainer = this.$.contentContainer;
       this.toggleClass('error', !isValid, contentContainer);
-      var hintContainer = this.$.hintContainer;
-      this.toggleClass('error', !isValid, hintContainer);
+      var hint = this.$.hint;
+      this.toggleClass('error', !isValid, hint);
     }
   });
 </script>
