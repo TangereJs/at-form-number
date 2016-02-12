@@ -132,18 +132,22 @@ at-form-number represents an input type=number element on the form
     ready: function() {
       this._isReady = false;
 
+      this._validationFunctions.push(this._validateNumberFormat.bind(this));
+
       var self = this;
       var valueProvider = self.$.input;
 
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
         self.value = valueProvider.value;
+        console.log("at-form-number.input:change event. Input field value is: " + valueProvider.value);
         self.validate();
         self.fire('value-changed', { value: self.value });
       });
 
       valueProvider.addEventListener('blur', function(e) {
         e.stopPropagation();
+        console.log("at-form-number.input:blur event. Input field value is: " + valueProvider.value);
         self.validate();
       });
 
@@ -151,6 +155,11 @@ at-form-number represents an input type=number element on the form
         if (event.which === 13) {
           event.preventDefault();
         }
+        console.log("at-form-number.input:keypress event. Input field value is: " + valueProvider.value);
+      });
+
+      valueProvider.addEventListener('input', function(event) {
+        console.log("at-form-number.input:input event. Input field value is: " + valueProvider.value);
       });
 
       this._isReady = true;
@@ -194,6 +203,26 @@ at-form-number represents an input type=number element on the form
       this.toggleClass('error', !isValid, contentContainer);
       var hint = this.$.hint;
       this.toggleClass('error', !isValid, hint);
+    },
+
+    _validateNumberFormat: function (value) {
+      if (value === '') {
+        return true;
+      }
+
+      var numberFormatRegex = /^(?:\d*\.\d*|\d+)$/;
+      var valid = true;
+
+      try {
+        valid = numberFormatRegex.test(value);
+        if(!valid) {
+          this._errorMessage = "Value {0} is not in a correct format".replace("{0}", value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      return valid;
     }
   });
 </script>
