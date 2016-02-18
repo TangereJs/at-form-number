@@ -23,7 +23,7 @@ at-form-number represents an input type=number element on the form
     <div id="atContainer" class="at-container">
       <iron-label id="label" for="input">{{label}}</iron-label>
       <div id="contentContainer" class="at-content-container">
-        <input id="input" class="at-content has-placeholder" name$="{{name}}" type="number" placeholder$="{{placeholder}}">
+        <input id="input" class="at-content has-placeholder" name$="{{name}}" type="text" placeholder$="{{placeholder}}">
       </div>
       <div id="hint"></div>
     </div>
@@ -140,14 +140,12 @@ at-form-number represents an input type=number element on the form
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
         self.value = valueProvider.value;
-        console.log("at-form-number.input:change event. Input field value is: " + valueProvider.value);
         self.validate();
         self.fire('value-changed', { value: self.value });
       });
 
       valueProvider.addEventListener('blur', function(e) {
         e.stopPropagation();
-        console.log("at-form-number.input:blur event. Input field value is: " + valueProvider.value);
         self.validate();
       });
 
@@ -155,11 +153,6 @@ at-form-number represents an input type=number element on the form
         if (event.which === 13) {
           event.preventDefault();
         }
-        console.log("at-form-number.input:keypress event. Input field value is: " + valueProvider.value);
-      });
-
-      valueProvider.addEventListener('input', function(event) {
-        console.log("at-form-number.input:input event. Input field value is: " + valueProvider.value);
       });
 
       this._isReady = true;
@@ -201,8 +194,6 @@ at-form-number represents an input type=number element on the form
       this.toggleClass('error', !isValid, label);
       var contentContainer = this.$.contentContainer;
       this.toggleClass('error', !isValid, contentContainer);
-      var hint = this.$.hint;
-      this.toggleClass('error', !isValid, hint);
     },
 
     _validateNumberFormat: function (value) {
@@ -223,6 +214,15 @@ at-form-number represents an input type=number element on the form
       }
 
       return valid;
+    },
+    // this function is part of the hint/validation API
+    // hint should be displayed when element gains focus
+    // behavior can not know when element gained focus
+    // but if gived focusable element it can attach to its focus event
+    // it should return focusable element if available or null if focusable element doesn't exist
+    _getFocusableElement: function () {
+      var focusable = this.$.input;
+      return focusable;
     }
   });
 </script>
