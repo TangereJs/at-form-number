@@ -208,7 +208,8 @@ at-form-number represents an input type=number element on the form
       try {
         valid = numberFormatRegex.test(value);
         if(!valid) {
-          this._errorMessage = "Value {0} is not in a correct format".replace("{0}", value);
+          var errorMessageTemplate = this.T("Value {0} is not in a correct format");
+          this._errorMessage = errorMessageTemplate.replace("{0}", value);
         }
       } catch (e) {
         console.log(e);
