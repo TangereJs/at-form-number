@@ -48,7 +48,8 @@ at-form-number represents an input type=number element on the form
       value: {
         type: Number,
         value: '',
-        observer: 'valueChanged'
+        observer: 'valueChanged',
+        title: 'Value'
       },
       /**
        * Hides title when true
@@ -67,7 +68,8 @@ at-form-number represents an input type=number element on the form
       required: {
         type: Boolean,
         value: false,
-        observer: 'requiredChanged'
+        observer: 'requiredChanged',
+        title: 'Input requred'
       },
 
       /**
@@ -76,7 +78,8 @@ at-form-number represents an input type=number element on the form
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'disabledChanged'
+        observer: 'disabledChanged',
+        title: 'Field value can not be changed'
       },
 
       /**
@@ -84,7 +87,8 @@ at-form-number represents an input type=number element on the form
        */
       name: {
         type: String,
-        value: ''
+        value: '',
+        title: 'Name'
       },
 
       /**
@@ -92,7 +96,8 @@ at-form-number represents an input type=number element on the form
        */
       label: {
         type: String,
-        value: ''
+        value: '',
+        title: 'Label'
       },
 
       /**
@@ -111,7 +116,8 @@ at-form-number represents an input type=number element on the form
       hide: {
         type: Boolean,
         value: false,
-        observer: 'hideChanged'
+        observer: 'hideChanged',
+        title: 'Field is invisible'
       }
     },
     $meta: [{
