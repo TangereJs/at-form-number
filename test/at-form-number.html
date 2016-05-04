@@ -25,6 +25,18 @@
     </template>
   </test-fixture>
 
+  <test-fixture id="isValueNumber">
+    <template>
+      <at-form-number value="48372"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="declDataBinding">
+    <template>
+      <at-form-number value="{{boundValue}}"></at-form-number>
+    </template>
+  </test-fixture>
+
   <test-fixture id="required">
     <template>
       <at-form-number required></at-form-number>
@@ -83,6 +95,22 @@
         assert.equal(input._getFocusableElement().value, input.value, 'inputElement.value equals input.value');
       });
 
+      test('is value number', function() {
+        var input = fixture('isValueNumber');
+        var value = input.value;
+        var typeOfValue = Object.prototype.toString.call(value);
+        assert.equal("[object Number]", typeOfValue, 'value is not of type Number');
+        assert.equal("48372", value, 'value is not equal to value specified in attribute');
+      });
+
+      test('declarative data binding', function() {
+        var db = { boundValue: 0 };
+        var input = fixture('declDataBinding', db);
+        input.value = 125;
+        // db.boundValue = 125;
+        assert.equal(db.boundValue, input.value, 'value is not equal to data bound value (This doesn\'t work because of issue described \n here https://github.com/Polymer/polymer/issues/2495 and \n here https://github.com/PolymerElements/test-fixture/issues/24 and \n here https://github.com/Polymer/test-fixture/issues/17)');
+      });
+
       test('required sets validation message', function() {
         var input = fixture('required');
         assert.equal(input.required, true, 'required property is true');
@@ -132,10 +160,10 @@
       test('number format error test', function () {
         var input = fixture('numberFormatError');
         input.validate();
-        assert.equal(input.$.input.value, 'this will cause number format error', 'value not set correctly');
-        assert.equal(input.value, 'this will cause number format error', 'value not set correctly');
+        assert.equal(input.$.input.value, 'NaN', 'value not set correctly');
+        assert.equal(isNaN(input.value), true, 'value not set correctly');
         assert.equal(input.valid, false, 'input is not invalid and it should be');
-        assert.equal(input.$.hint.innerHTML, 'Value this will cause number format error is not in a correct format', 'number format error message is not set correctly');
+        assert.equal(input.$.hint.innerHTML, 'Value NaN is not in a correct format', 'number format error message is not set correctly');
       });
 
       test('hide label test', function () {
