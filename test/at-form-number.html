@@ -15,7 +15,6 @@
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
   <link rel="import" href="../at-form-number.html">
-
 </head>
 <body>
 
@@ -28,12 +27,6 @@
   <test-fixture id="isValueNumber">
     <template>
       <at-form-number value="48372"></at-form-number>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="declDataBinding">
-    <template>
-      <at-form-number value="{{boundValue}}"></at-form-number>
     </template>
   </test-fixture>
 
@@ -103,12 +96,11 @@
         assert.equal("48372", value, 'value is not equal to value specified in attribute');
       });
 
-      test('declarative data binding', function() {
-        var db = { boundValue: 0 };
-        var input = fixture('declDataBinding', db);
+      test('prgrammatical creation and setting a value', function() {
+        var valueToSet = 125;
+        var input = document.createElement('at-form-number');
         input.value = 125;
-        // db.boundValue = 125;
-        assert.equal(db.boundValue, input.value, 'value is not equal to data bound value (This doesn\'t work because of issue described \n here https://github.com/Polymer/polymer/issues/2495 and \n here https://github.com/PolymerElements/test-fixture/issues/24 and \n here https://github.com/Polymer/test-fixture/issues/17)');
+        assert.equal(125, input.value, 'value is not equal to data bound value (This doesn\'t work because of issue described \n here https://github.com/Polymer/polymer/issues/2495 and \n here https://github.com/PolymerElements/test-fixture/issues/24 and \n here https://github.com/Polymer/test-fixture/issues/17)');
       });
 
       test('required sets validation message', function() {
