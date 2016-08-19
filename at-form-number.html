@@ -38,54 +38,12 @@ at-form-number represents an input type=number element on the form
     is: 'at-form-number',
     behaviors: [ Tangere.behaviors.formValidation, Tangere.behaviors.i18n ],
     properties: {
-      /**
-       * notify: true outside world should be notified that element's value has changed
-       * this is achieved via autoamtic value-changed event
-       * observer: 'valueChanged' outside world should be able to set/update the element's value
-       * component is notified about this via valueChanged callback function
-       * @property value
-       * @default empty
-       */
-      value: {
-        type: Number,
-        value: '',
-        observer: 'valueChanged',
-        title: 'Value'
-      },
-      /**
-       * Hides title when true
-       * @property hideLabel
-       * @default false
-       */
-      hideLabel: {
-        type: Boolean,
-        value: false,
-        observer: 'hideLabelChanged',
-        title: 'Do not show the label'
-      },
-
-      /**
-       * Element's required state for element validation purposes
-       */
-      required: {
-        type: Boolean,
-        value: false,
-        observer: 'requiredChanged',
-        title: 'Input required'
-      },
-
-      /**
-       * Element's disabled state
-       */
-      disabled: {
-        type: Boolean,
-        value: false,
-        observer: 'disabledChanged',
-        title: 'Field value can not be changed'
-      },
 
       /**
        * Element's label for element display purposes
+       * @property label
+       * @type String
+       * @default ""
        */
       label: {
         type: String,
@@ -94,13 +52,32 @@ at-form-number represents an input type=number element on the form
       },
 
       /**
-       * Element's placeholder text for element display purposes
+       * Hides title when true
+       * @property hideLabel
+       * @type Boolean
+       * @default false
        */
-      placeholder: {
-        type: String,
-        value: '',
-        title: 'Placeholder text'
+      hideLabel: {
+        type: Boolean,
+        value: false,
+        observer: '_hideLabelChanged',
+        title: 'Do not show the label'
       },
+
+      /**
+       * Element's disabled state
+       * @property disabled
+       * @type Boolean
+       * @default false
+       */
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged',
+        title: 'Field value can not be changed'
+      },
+
+
       /**
        * Hides the element. When hidden nothing is displayed for the element
        * @property hide
@@ -110,26 +87,59 @@ at-form-number represents an input type=number element on the form
       hide: {
         type: Boolean,
         value: false,
-        observer: 'hideChanged',
+        observer: '_hideChanged',
         title: 'Field is invisible'
-      }
+      },
+
+      /**
+       * Element's required state for element validation purposes
+       * @property required
+       * @type Boolean
+       * @default false
+       */
+      required: {
+        type: Boolean,
+        value: false,
+        observer: '_requiredChanged',
+        title: 'Input required'
+      },
+
+      /**
+       * Elements value
+       * @property value
+       * @type String
+       * @default empty
+       */
+      value: {
+        type: String,
+        value: '',
+        observer: '_valueChanged',
+        title: 'Value'
+      },
+
+      /**
+       * Element's placeholder text for element display purposes
+       * @property placeholder
+       * @type String
+       * @default empty
+       */
+      placeholder: {
+        type: String,
+        value: '',
+        title: 'Placeholder text'
+      },
+
     },
     $meta: [{
       title: "Number",
       type: "number"
     }],
 
-    hideChanged: function(newValue, oldValue) {
-      var atContainer = this.$.atContainer;
-      this.toggleClass('hidden', newValue, atContainer);
-      if (this._isReady) {
-        this.validate();
-      }
-    },
-    hideLabelChanged: function(newValue, oldValue) {
+    _hideLabelChanged: function(newValue, oldValue) {
       var label = this.$.label;
       this.toggleClass("hidden", newValue, label);
     },
+
     ready: function() {
       this._isReady = false;
 
@@ -159,7 +169,15 @@ at-form-number represents an input type=number element on the form
       this._isReady = true;
     },
 
-    disabledChanged: function(newValue, oldValue) {
+    _hideChanged: function(newValue, oldValue) {
+      var atContainer = this.$.atContainer;
+      this.toggleClass('hidden', newValue, atContainer);
+      if (this._isReady) {
+        this.validate();
+      }
+    },
+
+    _disabledChanged: function(newValue, oldValue) {
 
       var container = this.$.atContainer;
       this.toggleClass('disabled', newValue, container);
@@ -171,17 +189,13 @@ at-form-number represents an input type=number element on the form
       }
     },
 
-    requiredChanged: function(newValue, oldValue) {
+    _requiredChanged: function(newValue, oldValue) {
       if (this._isReady) {
         this.validate();
       }
     },
 
-    focus: function() {
-      this.$.input.focus();
-    },
-
-    valueChanged: function(newValue, oldValue) {
+    _valueChanged: function(newValue, oldValue) {
       this.$.input.value = newValue;
       // when value changes due to user input or its changed programmatically
       // valid state should be updated and visual indication displayed
@@ -218,6 +232,11 @@ at-form-number represents an input type=number element on the form
 
       return valid;
     },
+
+    focus: function() {
+      this.$.input.focus();
+    },
+
     // this function is part of the hint/validation API
     // hint should be displayed when element gains focus
     // behavior can not know when element gained focus
