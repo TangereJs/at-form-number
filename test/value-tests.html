@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+
+  <title>at-form-number tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-form-number.html">
+</head>
+<body>
+
+  <test-fixture id="valueUndefined">
+    <template>
+      <at-form-number value="undefined"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="valueNull">
+    <template>
+      <at-form-number value="null"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="valueEmptyString">
+    <template>
+      <at-form-number value=""></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="value42">
+    <template>
+      <at-form-number value="42"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="value314159">
+    <template>
+      <at-form-number value="3.14159"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="valueTrue">
+    <template>
+      <at-form-number value="true"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="valueFalse">
+    <template>
+      <at-form-number value="false"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="value[]">
+    <template>
+      <at-form-number value="[]"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="value{}">
+    <template>
+      <at-form-number value="{}"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="valueFunction">
+    <template>
+      <at-form-number value="function () { return undefined; }"></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="propertyTests">
+    <template>
+      <at-form-number></at-form-number>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    suite('events tests', function() {
+
+      suite('tests where value is set as attribute', function () {
+
+        test('value is undefined', function () {
+          var element = fixture('valueUndefined');
+          assert.equal("undefined", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is null', function () {
+          var element = fixture('valueNull');
+          assert.equal("null", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is empty string', function () {
+          var element = fixture('valueEmptyString');
+          assert.equal("", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is 42', function () {
+          var element = fixture('value42');
+          assert.equal("42", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("42", input.value, "display value not set correctly");
+        });
+
+        test('value is 3.14159', function () {
+          var element = fixture('value314159');
+          assert.equal("3.14159", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("3.14159", input.value, "display value not set correctly");
+        });
+
+        test('value is true', function () {
+          var element = fixture('valueTrue');
+          assert.equal("true", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is false', function () {
+          var element = fixture('valueFalse');
+          assert.equal("false", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is []', function () {
+          var element = fixture('valueFalse');
+          assert.equal("", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("", input.value, "display value not set correctly");
+        });
+
+        test('value is {}', function () {
+          var element = fixture('valueFalse');
+          assert.equal("[object Object]", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("[object Object]", input.value, "display value not set correctly");
+        });
+
+        test('value is function', function () {
+          var element = fixture('valueFunction');
+          assert.equal("function () { return undefined; }", element.value, "value not set correctly");
+
+          var input = element.$.input;
+          assert.equal("function () { return undefined; }", input.value, "display value not set correctly");
+        });
+
+      });
+
+      suite('tests where value is set in code', function () {
+
+        test('value set in code', function () {
+          var invalidNumberValues = [ undefined, null, "", "42", "3.14159", true, false, "true", "false", [], {}, "[]", "{}", function () { return undefined; }];
+          var expectedValues = [ undefined, null, "", "42", "3.14159", true, false, "true", "false", [], {}, "[]", "{}", function () { return undefined; }];
+
+          var element = fixture('propertyTests');
+
+          for (var i = 0; i < invalidNumberValues.length; i++) {
+            var invalidValue = invalidNumberValues[i];
+            var expectedValue = expectedValues[i];
+
+            element.value = invalidValue;
+
+            assert.equal(expectedValue, element.value, "value is not set correctly");
+          }
+
+        });
+
+      });
+
+
+      // test('setting .value trigger value-changed event', function(done) {
+      //   var input = fixture('valueChanged');
+      //   assert.equal(input.value, '', 'initial value not set correctly');
+      //
+      //   input.addEventListener('value-changed', function(event) {
+      //     assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
+      //     assert.equal(input.value, 'demo value', 'event detail value not set correctly');
+      //     done();
+      //   });
+      //
+      //   input.value = 'demo value';
+      //   Polymer.dom(input).setAttribute('value', 'demo value');
+      //   input.value = 'demo value';
+      //   Polymer.dom(input).setAttribute('value', 'demo value');
+      // });
+      //
+      // test('setting value attribute doesn\'t trigger value-changed event', function(done) {
+      //   var input = fixture('valueAsAttrTextFixture');
+      //   assert.equal(input.value, 'lorem ipsum', 'initial value not set correctly');
+      //
+      //   var eventCount = 0;
+      //   input.addEventListener('value-changed', function(event) {
+      //     eventCount += 1;
+      //   });
+      //
+      //   flush(function () {
+      //     assert.equal(eventCount, 0, 'value-changed event was fired');
+      //     done();
+      //   });
+      // });
+
+    });
+  </script>
+
+</body>
+</html>

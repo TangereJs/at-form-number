@@ -5,7 +5,7 @@
   Tangere.behaviors.AtFormNumberInputValidation = {
 
     /*
-      Since its desired to use _validateData outside of at-form-text, eg. in BOT
+      Since its desired to use _validateData outside of at-form-number, eg. in BOT
       other environments must supply their own localization
     */
 
@@ -67,7 +67,7 @@
       // validate input parameters
       // schema must be object
       // @isHTMLUnknownElement(schema) thank you IE11 and Safari for not supporting custom elements. Thank you very much ...
-      validationResult.isValid = isObject(schema) || ((isHTMLUnknownElement(schema) || isHTMLElement(schema)) && schema.is === "at-form-text");
+      validationResult.isValid = isObject(schema) || ((isHTMLUnknownElement(schema) || isHTMLElement(schema)) && schema.is === "at-form-number");
       if (!validationResult.isValid) {
         validationResult.errorMessage = localizer("schema is not an object.")
         return validationResult;
@@ -101,16 +101,9 @@
         return validationResult;
       }
 
-      // schema must have maxChars property and maxChars must be a Number
-      validationResult.isValid = !isNaN(schema.maxChars) || isNumber(schema.maxChars);
-      if (!validationResult.isValid) {
-        validationResult.errorMessage = localizer("schema.maxChars is not a number value.")
-        return validationResult;
-      }
-
       /*
         2. check data type
-        value assigned must match type specified in at-form-text.properties.value.type
+        value assigned must match type specified in at-form-number.properties.value.type
       */
       /*
         TAG P2
@@ -138,9 +131,9 @@
       /*
         TAG P4
 
-        for at-form-text check maxChars only
+        for at-form-number check maxChars only
       */
-      validationResult = _validateMaxChars(schema.maxChars, value, localizer);
+      validationResult = _validateNumberFormat(schema.maxChars, value, localizer);
 
       return validationResult;
 
@@ -155,7 +148,7 @@
         };
 
         // calculate type strings for valueObj and object that is returned from valueSchema.type function
-        // valueSchema.type function comes from at-form-text.properties.value.type
+        // valueSchema.type function comes from at-form-number.properties.value.type
         var schemaTypeString = getTypeString(valueSchema.type());
         var nullTypeString = getTypeString(null);
         var valueObjTypeString = getTypeString(valueObj);
@@ -187,20 +180,18 @@
         return validationResult;
       }
 
-      function _validateMaxChars(maxChars, value, localizer) {
+      function _validateNumberFormat(maxChars, value, localizer) {
         var validationResult = {
           isValid: true,
           errorMessage: ""
         };
 
+        var numberFormatRegex = /^(?:\d*\.\d*|\d+)$/;
+
         try {
-          var maxChars = parseInt(maxChars);
-          if (maxChars > 0) {
-            var charCount = value.length;
-            validationResult.isValid = (maxChars + 1) > charCount;
-            if (!validationResult.isValid) {
-              validationResult.errorMessage = localizer("You can not enter more than {0} characters.", maxChars);
-            }
+          validationResult.isValid = numberFormatRegex.test(value);
+          if(!validationResult.isValid) {
+            validationResult.errorMessage = localizer("Value {0} is not in a correct format", value);
           }
         } catch (e) {
           console.log(e);

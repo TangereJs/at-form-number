@@ -1,7 +1,7 @@
 <link rel="import" href="../tangere/tangere.html">
 <link rel="import" href="../at-i18n/at-i18n-behavior.html">
 <link rel="import" href="../at-theme/at-theme.html">
-<link rel="import" href="../at-form-behaviors/at-form-behaviors-validation.html">
+<link rel="import" href="../at-form-behaviors/at-form-behaviors.html">
 <link rel="import" href="../iron-label/iron-label.html">
 <link rel="import" href="at-form-number-input-validation.html">
 <!--
@@ -36,7 +36,7 @@ at-form-number represents an input type=number element on the form
   "use strict";
   Polymer({
     is: 'at-form-number',
-    behaviors: [ Tangere.behaviors.formValidation, Tangere.behaviors.i18n ],
+    behaviors: [ Tangere.behaviors.i18n,  Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormNumberInputValidation ],
     properties: {
 
       /**
@@ -100,7 +100,6 @@ at-form-number represents an input type=number element on the form
       required: {
         type: Boolean,
         value: false,
-        observer: '_requiredChanged',
         title: 'Input required'
       },
 
@@ -130,6 +129,11 @@ at-form-number represents an input type=number element on the form
       },
 
     },
+
+    observers: [
+      '_internalValidStateUpdate(disabled, required)'
+    ],
+
     $meta: [{
       title: "Number",
       type: "number"
@@ -141,23 +145,16 @@ at-form-number represents an input type=number element on the form
     },
 
     ready: function() {
-      this._isReady = false;
-
-      this._validationFunctions.push(this._validateNumberFormat.bind(this));
-
       var self = this;
-      var valueProvider = self.$.input;
-
+      var valueProvider = this.$.input;
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
-        self.value = valueProvider.value;
-        self.validate();
-        self.fire('value-changed', { value: self.value });
+        self.validate(true);
       });
 
       valueProvider.addEventListener('blur', function(e) {
         e.stopPropagation();
-        self.validate();
+        self.validate(true);
       });
 
       valueProvider.addEventListener('keypress', function(event) {
@@ -172,37 +169,40 @@ at-form-number represents an input type=number element on the form
     _hideChanged: function(newValue, oldValue) {
       var atContainer = this.$.atContainer;
       this.toggleClass('hidden', newValue, atContainer);
-      if (this._isReady) {
-        this.validate();
-      }
     },
 
     _disabledChanged: function(newValue, oldValue) {
-
       var container = this.$.atContainer;
       this.toggleClass('disabled', newValue, container);
       var input = this.$.input;
       this.toggleAttribute('disabled', newValue, input);
+    },
 
+    _internalValidStateUpdate: function(disabled, required) {
       if (this._isReady) {
         this.validate();
       }
     },
 
-    _requiredChanged: function(newValue, oldValue) {
-      if (this._isReady) {
-        this.validate();
-      }
-    },
+    validate: function (showError) {
+      if (showError === undefined) { showError = this.autovalidate; }
+      this._clearUIValidState();
 
-    _valueChanged: function(newValue, oldValue) {
-      this.$.input.value = newValue;
-      // when value changes due to user input or its changed programmatically
-      // valid state should be updated and visual indication displayed
-      if (this._isReady) {
-        this.validate();
-        this.fire('value-changed', { value: newValue });
+      var inputValue = this.$.input.value;
+      if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
+        this.value = inputValue;
       }
+
+      var validationResult = this._validateBaseData();
+      if(showError) this._handleValidationResult(validationResult);
+      if (validationResult.isFinal) {
+        return validationResult.isValid;
+      }
+
+      validationResult = this._validateData(this, this.value, this.T.bind(this));
+      if(showError) this._handleValidationResult(validationResult);
+
+      return validationResult.isValid;
     },
 
     _updateUIValidState: function(isValid) {
@@ -212,36 +212,18 @@ at-form-number represents an input type=number element on the form
       this.toggleClass('error', !isValid, contentContainer);
     },
 
-    _validateNumberFormat: function (value) {
-      if (value === '') {
-        return true;
+    _valueChanged: function(newValue, oldValue) {
+      this.$.input.value = newValue;
+
+      if (this._isReady) {
+        this._fireValueChangedEvent(newValue);
       }
-
-      var numberFormatRegex = /^(?:\d*\.\d*|\d+)$/;
-      var valid = true;
-
-      try {
-        valid = numberFormatRegex.test(value);
-        if(!valid) {
-          var errorMessageTemplate = this.T("Value {0} is not in a correct format");
-          this._errorMessage = errorMessageTemplate.replace("{0}", value);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-
-      return valid;
     },
 
     focus: function() {
       this.$.input.focus();
     },
 
-    // this function is part of the hint/validation API
-    // hint should be displayed when element gains focus
-    // behavior can not know when element gained focus
-    // but if gived focusable element it can attach to its focus event
-    // it should return focusable element if available or null if focusable element doesn't exist
     _getFocusableElement: function () {
       var focusable = this.$.input;
       return focusable;
