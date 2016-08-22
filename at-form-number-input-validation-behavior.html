@@ -105,9 +105,6 @@
         2. check data type
         value assigned must match type specified in at-form-number.properties.value.type
       */
-      /*
-        TAG P2
-      */
       validationResult = _validateValueType(schema.properties.value, value, localizer);
       if (!validationResult.isValid) {
         return validationResult;
@@ -117,9 +114,6 @@
         3. check required
         if required check fails validating anything else is meaningless
       */
-      /*
-        TAG P3
-      */
       validationResult = _validateRequired(schema.required, value, localizer);
       if (!validationResult.isValid) {
         return validationResult;
@@ -127,13 +121,9 @@
 
       /*
         4. check element specific constraints
+        for at-form-number check number format
       */
-      /*
-        TAG P4
-
-        for at-form-number check maxChars only
-      */
-      validationResult = _validateNumberFormat(schema.maxChars, value, localizer);
+      validationResult = _validateNumberFormat(value, localizer);
 
       return validationResult;
 
@@ -180,11 +170,15 @@
         return validationResult;
       }
 
-      function _validateNumberFormat(maxChars, value, localizer) {
+      function _validateNumberFormat(value, localizer) {
         var validationResult = {
           isValid: true,
           errorMessage: ""
         };
+
+        if ([null, "null", ""].indexOf(value) !== -1) {
+          return validationResult;
+        }
 
         var numberFormatRegex = /^(?:\d*\.\d*|\d+)$/;
 

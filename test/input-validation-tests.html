@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>at-form-text tests</title>
+  <title>at-form-number tests</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,7 +14,7 @@
   <script src="../../web-component-tester/browser.js"></script>
   <script src="../../iron-test-helpers/test-helpers.js"></script>
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
-  <link rel="import" href="../at-form-text-input-validation-behavior.html">
+  <link rel="import" href="../at-form-number-input-validation-behavior.html">
 
 </head>
 
@@ -22,7 +22,7 @@
 
   <script>
 
-    suite('at-form-text input validation', function() {
+    suite('at-form-number input validation', function() {
       function isArray(obj) {
         return Object.prototype.toString.call(obj) === "[object Array]";
       }
@@ -49,7 +49,7 @@
       }
 
       test('invalid schemas test, schema is not an object', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var invalidSchemaValues = [ undefined, null, "", "undefined", "null", true, false, "true", "false", 42, "42", 3.14159, "3.14159", [], "[]", function() { return undefined; }];
 
         var value = "";
@@ -64,7 +64,7 @@
       });
 
       test('invalid schemas test, schema.properties is not an object', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {};
         var value = "";
 
@@ -86,7 +86,7 @@
       });
 
       test('invalid schemas test, schema.properties.value is not an object', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {}
         };
@@ -110,7 +110,7 @@
       });
 
       test('invalid schemas test, schema.properties.value.type is not a function', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {}
@@ -136,7 +136,7 @@
       });
 
       test('invalid schemas test, schema.properties.value.type is valid, required is invalid', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {
@@ -163,37 +163,8 @@
         }
       });
 
-      test('invalid schemas test, schema.properties.value.type is valid, required is valid, maxChars is invalid', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
-        var schema = {
-          properties: {
-            value: {
-              type: String
-            }
-          },
-          required: false
-        };
-        var value = "";
-
-        var validationResult = inputValidation._validateData(schema, value, format);
-        assert.equal(validationResult.isValid, false, 'schema.maxChars is valid');
-        assert.equal(validationResult.errorMessage, "schema.maxChars is not a number value.", 'error message not set correctly');
-
-        var invalidValues = [ undefined, null, "", "42", "3.14159", true, false, "true", "false", [], {}, "[]", "{}", function () { return undefined; }];
-
-        for (var i = 0; i < invalidValues.length; i++) {
-          var invalidValue = invalidValues[i];
-          schema._valueFormat = invalidValue;
-
-          var validationResult = inputValidation._validateData(schema, value, format);
-
-          assert.equal(validationResult.isValid, false, 'schema.maxChars is valid');
-          assert.equal(validationResult.errorMessage, "schema.maxChars is not a number value.", 'error message not set correctly');
-        }
-      });
-
       test('valid schemas test, invalid values', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {
@@ -228,15 +199,14 @@
       });
 
       test('valid schema, value = [null, ""], required = [true, false] test', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {
               type: String
             }
           },
-          required: false,
-          maxChars: 0
+          required: false
         };
 
         var value = null;
@@ -265,7 +235,7 @@
         assert.equal(validationResult.errorMessage, "This field is required.");
 
 
-        value = "lorem ipsum";
+        value = "424242";
         schema.required = false;
 
         var validationResult = inputValidation._validateData(schema, value, format);
@@ -279,19 +249,18 @@
         assert.equal(validationResult.errorMessage, '');
       });
 
-      test('valid schema, value = "lorem ipsum", required = false maxChars=0 test', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+      test('valid schema, value = "424242", required = false test', function() {
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {
               type: String
             }
           },
-          required: false,
-          maxChars: 0
+          required: false
         };
 
-        var value = "lorem ipsum";
+        var value = "424242";
 
         var validationResult = inputValidation._validateData(schema, value, format);
         assert.equal(validationResult.isValid, true, 'value is invalid');
@@ -304,23 +273,22 @@
         assert.equal(validationResult.errorMessage, '');
       });
 
-      test('valid schema, value = "lorem ipsum", required = false maxChars=5 test', function() {
-        var inputValidation = Tangere.behaviors.AtFormTextInputValidation;
+      test('valid schema, value = "lorem ipsum", required = false test', function() {
+        var inputValidation = Tangere.behaviors.AtFormNumberInputValidation;
         var schema = {
           properties: {
             value: {
               type: String
             }
           },
-          required: false,
-          maxChars: 5
+          required: false
         };
 
         var value = "lorem ipsum";
 
         var validationResult = inputValidation._validateData(schema, value, format);
         assert.equal(validationResult.isValid, false, 'value is valid');
-        assert.equal(validationResult.errorMessage, 'You can not enter more than 5 characters.');
+        assert.equal(validationResult.errorMessage, 'Value lorem ipsum is not in a correct format');
 
         var value = "";
 

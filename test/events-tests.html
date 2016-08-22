@@ -2,7 +2,7 @@
 <html>
 <head>
 
-  <title>at-form-text tests</title>
+  <title>at-form-number tests</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,19 +14,19 @@
   <script src="../../iron-test-helpers/test-helpers.js"></script>
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
-  <link rel="import" href="../at-form-text.html">
+  <link rel="import" href="../at-form-number.html">
 </head>
 <body>
 
   <test-fixture id="valueChanged">
     <template>
-      <at-form-text></at-form-text>
+      <at-form-number></at-form-number>
     </template>
   </test-fixture>
 
   <test-fixture id="valueAsAttrTextFixture">
     <template>
-      <at-form-text value="lorem ipsum"></at-form-text>
+      <at-form-number value="lorem ipsum"></at-form-number>
     </template>
   </test-fixture>
 
@@ -38,16 +38,22 @@
         var input = fixture('valueChanged');
         assert.equal(input.value, '', 'initial value not set correctly');
 
+        var eventCount = 0;
         input.addEventListener('value-changed', function(event) {
           assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
           assert.equal(input.value, 'demo value', 'event detail value not set correctly');
-          done();
+          eventCount += 1;
         });
 
         input.value = 'demo value';
         Polymer.dom(input).setAttribute('value', 'demo value');
         input.value = 'demo value';
         Polymer.dom(input).setAttribute('value', 'demo value');
+
+        flush(function () {
+          assert.equal(eventCount, 1, 'value-changed event was fired');
+          done();
+        });
       });
 
       test('setting value attribute doesn\'t trigger value-changed event', function(done) {

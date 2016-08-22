@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>at-form-text tests</title>
+  <title>at-form-number tests</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -15,7 +15,7 @@
   <script src="../../iron-test-helpers/test-helpers.js"></script>
   <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
-  <link rel="import" href="../at-form-text.html">
+  <link rel="import" href="../at-form-number.html">
 
 </head>
 
@@ -23,14 +23,11 @@
 
   <test-fixture id="validateLikeBlur">
     <template>
-      <at-form-text></at-form-text>
+      <at-form-number></at-form-number>
     </template>
   </test-fixture>
 
   <script>
-    /*
-      These tests will fail in Chrome under shadow DOM because
-    */
     suite('validate like blur tests', function() {
 
       // helper function that figures out whether we are in shadowDOM or shadyDOM
@@ -81,7 +78,7 @@
         if (getDomMode(input) === 'shadowDOM') {
           activeElement = input.shadowRoot.activeElement;
         }
-        
+
         assert.equal(inputElement.id, activeElement.id, 'Input element has lost focus');
 
         inputElement.value = "lorem ipsum";

@@ -95,7 +95,7 @@
           assert.equal("undefined", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("", input.value, "display value not set correctly");
+          assert.equal("undefined", input.value, "display value not set correctly");
         });
 
         test('value is null', function () {
@@ -103,7 +103,7 @@
           assert.equal("null", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("", input.value, "display value not set correctly");
+          assert.equal("null", input.value, "display value not set correctly");
         });
 
         test('value is empty string', function () {
@@ -135,7 +135,7 @@
           assert.equal("true", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("", input.value, "display value not set correctly");
+          assert.equal("true", input.value, "display value not set correctly");
         });
 
         test('value is false', function () {
@@ -143,23 +143,23 @@
           assert.equal("false", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("", input.value, "display value not set correctly");
+          assert.equal("false", input.value, "display value not set correctly");
         });
 
         test('value is []', function () {
-          var element = fixture('valueFalse');
-          assert.equal("", element.value, "value not set correctly");
+          var element = fixture('value[]');
+          assert.equal("[]", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("", input.value, "display value not set correctly");
+          assert.equal("[]", input.value, "display value not set correctly");
         });
 
         test('value is {}', function () {
-          var element = fixture('valueFalse');
-          assert.equal("[object Object]", element.value, "value not set correctly");
+          var element = fixture('value{}');
+          assert.equal("{}", element.value, "value not set correctly");
 
           var input = element.$.input;
-          assert.equal("[object Object]", input.value, "display value not set correctly");
+          assert.equal("{}", input.value, "display value not set correctly");
         });
 
         test('value is function', function () {
@@ -174,56 +174,84 @@
 
       suite('tests where value is set in code', function () {
 
+        function isArray(obj) {
+          return Object.prototype.toString.call(obj) === "[object Array]";
+        }
+
+        function isObject(obj) {
+          return Object.prototype.toString.call(obj) === "[object Object]";
+        }
+
+        function isFunction(obj) {
+          return Object.prototype.toString.call(obj) === "[object Function]";
+        }
+
+        function areEqual(obj1, obj2) {
+          var result = false;
+          var obj1PropertyValue;
+          var obj2PropertyValue;
+
+          if (isArray(obj1) && isArray(obj2)) {
+            result = obj1.length === obj2.length;
+            // if lengths are different return false
+            if(!result) {
+              return result;
+            }
+
+            // else compare items in the arrays for equality
+            for (var i = 0; i < obj1.length && result; i++) {
+              obj1PropertyValue = obj1[i];
+              obj2PropertyValue = obj2[i];
+              result = areEqual(obj1PropertyValue, obj2PropertyValue);
+            }
+          } else if (isObject(obj1) && isObject(obj2)) {
+            var obj1Properties = Object.keys(obj1);
+            var obj2Properties = Object.keys(obj2);
+            // tests that these arrays have same lengths and same names
+            result = areEqual(obj1Properties, obj2Properties);
+
+            if (!result) {
+              return result;
+            }
+            // test that every property in both objects has same value
+            for (var j = 0; j < obj1Properties.length && result; j++) {
+              var obj1PropertyName = obj1Properties[j];
+              var obj2PropertyName = obj2Properties[j];
+              obj1PropertyValue = obj1[obj1PropertyName];
+              obj2PropertyValue = obj2[obj2PropertyName];
+              result = areEqual(obj1PropertyValue, obj2PropertyValue);
+            }
+
+          } else if (isFunction(obj1) && isFunction(obj2)) {
+            result = obj1.toString() === obj2.toString();
+          } else {
+            // this tests string, number, boolean, null and undefined
+            result = obj1 === obj2;
+          }
+
+          return result;
+        }
+
         test('value set in code', function () {
           var invalidNumberValues = [ undefined, null, "", "42", "3.14159", true, false, "true", "false", [], {}, "[]", "{}", function () { return undefined; }];
           var expectedValues = [ undefined, null, "", "42", "3.14159", true, false, "true", "false", [], {}, "[]", "{}", function () { return undefined; }];
+          var expectedDisplayValues = [ "", "", "", "42", "3.14159", "", "", "true", "false", "", "", "[]", "{}", ""];
 
           var element = fixture('propertyTests');
+          var displayInput = element.$.input;
 
           for (var i = 0; i < invalidNumberValues.length; i++) {
             var invalidValue = invalidNumberValues[i];
             var expectedValue = expectedValues[i];
+            var expectedDisplayValue = expectedDisplayValues[i];
 
             element.value = invalidValue;
-
-            assert.equal(expectedValue, element.value, "value is not set correctly");
+            assert.equal(true, areEqual(expectedValue, element.value), "value is not set correctly");
+            assert.equal(expectedDisplayValue, displayInput.value, "display value not set correctly");
           }
-
         });
 
       });
-
-
-      // test('setting .value trigger value-changed event', function(done) {
-      //   var input = fixture('valueChanged');
-      //   assert.equal(input.value, '', 'initial value not set correctly');
-      //
-      //   input.addEventListener('value-changed', function(event) {
-      //     assert.equal(event.detail.value, 'demo value', 'event detail value not set correctly');
-      //     assert.equal(input.value, 'demo value', 'event detail value not set correctly');
-      //     done();
-      //   });
-      //
-      //   input.value = 'demo value';
-      //   Polymer.dom(input).setAttribute('value', 'demo value');
-      //   input.value = 'demo value';
-      //   Polymer.dom(input).setAttribute('value', 'demo value');
-      // });
-      //
-      // test('setting value attribute doesn\'t trigger value-changed event', function(done) {
-      //   var input = fixture('valueAsAttrTextFixture');
-      //   assert.equal(input.value, 'lorem ipsum', 'initial value not set correctly');
-      //
-      //   var eventCount = 0;
-      //   input.addEventListener('value-changed', function(event) {
-      //     eventCount += 1;
-      //   });
-      //
-      //   flush(function () {
-      //     assert.equal(eventCount, 0, 'value-changed event was fired');
-      //     done();
-      //   });
-      // });
 
     });
   </script>
