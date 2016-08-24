@@ -164,6 +164,7 @@ at-form-number represents an input type=number element on the form
       });
 
       this._isReady = true;
+      this._internalValidStateUpdate(this.disabled, this.required);
     },
 
     _hideChanged: function(newValue, oldValue) {
