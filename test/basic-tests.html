@@ -124,10 +124,18 @@
           assert.equal(input.required, true, 'required property is true');
 
           var hint = Polymer.dom(input.$.hint);
-          assert.equal(input.T("This field is required."), hint.innerHTML, 'error message is not initially empty');
+          assert.equal(hint.innerHTML, "", 'error message is not initially empty');
 
           assert.equal(false, input.valid, "element is valid");
-          assert.equal(input.T("This field is required."), hint.innerHTML, 'error message is not set correctly');
+          assert.equal(hint.innerHTML, "", 'error message is not set correctly');
+
+          var label = Polymer.dom(input.$.label);
+          assert.equal(false, label.classList.contains('error'), "label doesn't have error class");
+          var atContainer = Polymer.dom(input.$.contentContainer);
+          assert.equal(false, atContainer.classList.contains('error'), "atContainer doesn't have error class");
+
+          assert.equal(false, input.validate(true), "element is valid");
+          assert.equal(hint.innerHTML, input.T("This field is required."), 'error message is not set correctly');
 
           var label = Polymer.dom(input.$.label);
           assert.equal(true, label.classList.contains('error'), "label doesn't have error class");
@@ -237,12 +245,21 @@
 
           var hint = Polymer.dom(input.$.hint);
           assert.equal(false, input.valid, "element is valid");
-          assert.equal(input.T("This field is required."), hint.innerHTML, 'error message is not set correctly.');
+          assert.equal( hint.innerHTML, "", 'error message is not set correctly.');
+
+          var label = Polymer.dom(input.$.label);
+          assert.equal(false, label.classList.contains('error'), "label doesn't have error class");
+          var atContainer = Polymer.dom(input.$.contentContainer);
+          assert.equal(false, atContainer.classList.contains('error'), "atContainer doesn't have error class");
+
+          assert.equal(false, input.validate(true), "element is valid");
+          assert.equal(hint.innerHTML, input.T("This field is required."), 'error message is not set correctly.');
 
           var label = Polymer.dom(input.$.label);
           assert.equal(true, label.classList.contains('error'), "label doesn't have error class");
           var atContainer = Polymer.dom(input.$.contentContainer);
           assert.equal(true, atContainer.classList.contains('error'), "atContainer doesn't have error class");
+
         });
 
         test('disabled sets css classes', function() {
