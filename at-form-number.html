@@ -149,12 +149,12 @@ at-form-number represents an input type=number element on the form
       var valueProvider = this.$.input;
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
-        self.validate(true);
+        self.validate();
       });
 
       valueProvider.addEventListener('blur', function(e) {
         e.stopPropagation();
-        self.validate(true);
+        self.validate();
       });
 
       valueProvider.addEventListener('keypress', function(event) {
@@ -181,7 +181,7 @@ at-form-number represents an input type=number element on the form
 
     _internalValidStateUpdate: function(disabled, required) {
       if (this._isReady) {
-        this.validate(true);
+        this.validate();
       }
     },
 
