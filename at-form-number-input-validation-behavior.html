@@ -141,9 +141,10 @@
         // valueSchema.type function comes from at-form-number.properties.value.type
         var schemaTypeString = getTypeString(valueSchema.type());
         var nullTypeString = getTypeString(null);
+        var numberTypeString = getTypeString(42);
         var valueObjTypeString = getTypeString(valueObj);
 
-        validationResult.isValid = (schemaTypeString === valueObjTypeString) || (nullTypeString === valueObjTypeString);
+        validationResult.isValid = (schemaTypeString === valueObjTypeString) || (nullTypeString === valueObjTypeString) || (numberTypeString === valueObjTypeString);
         if (!validationResult.isValid) {
           validationResult.errorMessage = localizer("Type specified in schema doesn't match type of value object for property value. Expected {0} to match {1}", schemaTypeString, valueObjTypeString);
         }
