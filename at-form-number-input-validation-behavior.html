@@ -181,7 +181,7 @@
           return validationResult;
         }
 
-        var numberFormatRegex = /^(?:\d*\.\d*|\d+)$/;
+        var numberFormatRegex = /^[+|-]{0,1}(?:\d*\.\d*|\d+)$/;
 
         try {
           validationResult.isValid = numberFormatRegex.test(value);
