@@ -124,6 +124,15 @@
         for at-form-number check number format
       */
       validationResult = _validateNumberFormat(value, localizer);
+      if (!validationResult.isValid) {
+        return validationResult;
+      }
+
+      /*
+        5. check element specific constraints
+        for at-form-number check min max value
+      */
+      validationResult = _validateMinMaxConstraint(value, schema.minValue, schema.maxValue, localizer);
 
       return validationResult;
 
@@ -190,6 +199,31 @@
           }
         } catch (e) {
           console.log(e);
+        }
+
+        return validationResult;
+      }
+
+      function _validateMinMaxConstraint(valueStr, minValueStr, maxValueStr, localizer) {
+        var validationResult = {
+          isValid: true,
+          errorMessage: ""
+        };
+
+        var value = parseFloat(valueStr);
+        var minValue = parseFloat(minValueStr);
+        var maxValue = parseFloat(maxValueStr);
+
+        if (!window.isNaN(minValue) && value < minValue) {
+          validationResult.isValid = false;
+          validationResult.errorMessage = localizer("Value {0} is lower than allowed min value of {1}", value, minValue);
+          return validationResult;
+        }
+
+        if (!window.isNaN(maxValue) && value > maxValue) {
+          validationResult.isValid = false;
+          validationResult.errorMessage = localizer("Value {0} is greater than allowed max value of {1}", value, maxValue);
+          return validationResult;
         }
 
         return validationResult;

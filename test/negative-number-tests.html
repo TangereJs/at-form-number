@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-number tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-form-number.html">
+
+</head>
+
+<body>
+
+  <test-fixture id="positiveInvalidValue">
+    <template>
+      <at-form-number value="loremipsum" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="positiveInvalidValueWithPlus">
+    <template>
+      <at-form-number value="+loremipsum" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="positiveValidValueWithPlus">
+    <template>
+      <at-form-number value="+42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="negativeInvalidValue">
+    <template>
+      <at-form-number value="-loremipsum" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="negativeValidValue">
+    <template>
+      <at-form-number value="-42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="propertyTests">
+    <template>
+      <at-form-number auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('positive and negative value tests', function() {
+
+
+      suite('tests where value is set as attribute', function() {
+
+        test('value set to loremipsum', function() {
+          var input = fixture('positiveInvalidValue');
+          assert.equal(input.value, "loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to +loremipsum', function() {
+          var input = fixture('positiveInvalidValueWithPlus');
+          assert.equal(input.value, "+loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value +loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to +42', function() {
+          var input = fixture('positiveValidValueWithPlus');
+          assert.equal(input.value, "+42", 'value not set correctly');
+          assert.equal(input.valid, true, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('value set to -loremipsum', function() {
+          var input = fixture('negativeInvalidValue');
+          assert.equal(input.value, "-loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value -loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to -42', function() {
+          var input = fixture('negativeValidValue');
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.valid, true, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+      });
+
+      suite('tests where value is set in code', function(){ 
+
+        test('value set to loremipsum', function() {
+          var input = fixture('propertyTests');
+          input.value = "loremipsum";
+          assert.equal(input.value, "loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to +loremipsum', function() {
+          var input = fixture('propertyTests');
+          input.value = "+loremipsum";
+          assert.equal(input.value, "+loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value +loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to +42', function() {
+          var input = fixture('propertyTests');
+          input.value = "+42";
+          assert.equal(input.value, "+42", 'value not set correctly');
+          assert.equal(input.valid, true, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('value set to -loremipsum', function() {
+          var input = fixture('propertyTests');
+          input.value = "-loremipsum";
+          assert.equal(input.value, "-loremipsum", 'value not set correctly');
+          assert.equal(input.valid, false, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "Value -loremipsum is not in a correct format", "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('value set to -42', function() {
+          var input = fixture('propertyTests');
+          input.value = "-42";
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.valid, true, 'element is not invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

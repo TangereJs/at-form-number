@@ -1,0 +1,336 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>at-form-number tests</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/test-helpers.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../at-form-number.html">
+
+</head>
+
+<body>
+
+  <test-fixture id="noMinMaxNegative">
+    <template>
+      <at-form-number value="-42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="noMinMaxPositive">
+    <template>
+      <at-form-number value="42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="min0NoMax_1">
+    <template>
+      <at-form-number value="-42" min-value="0" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="min0NoMax_2">
+    <template>
+      <at-form-number value="42" min-value="0" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="noMinMax0_1">
+    <template>
+      <at-form-number value="-42" max-value="0" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="noMinMax0_2">
+    <template>
+      <at-form-number value="42" max-value="0" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="min42max42_1">
+    <template>
+      <at-form-number value="-43" min-value="-42" max-value="42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="min42max42_2">
+    <template>
+      <at-form-number value="43" min-value="-42" max-value="42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="min42max42_3">
+    <template>
+      <at-form-number value="0" min-value="-42" max-value="42" auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="propertyTests">
+    <template>
+      <at-form-number auto-validate></at-form-number>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('min max value tests', function() {
+
+      suite('tests where value is set as attribute', function() {
+
+        test('min max not set value -42', function() {
+          var input = fixture('noMinMaxNegative');
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('min max not set value 42', function() {
+          var input = fixture('noMinMaxPositive');
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('min 0, max not set value -42', function() {
+          var input = fixture('min0NoMax_1');
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "0", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is lower than allowed min value of {1}", "-42", "0"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min 0, max not set value 42', function() {
+          var input = fixture('min0NoMax_2');
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "0", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('no min, max 0 value -42', function() {
+          var input = fixture('noMinMax0_1');
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "0", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('no min, max 0 value 42', function() {
+          var input = fixture('noMinMax0_2');
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "0", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is greater than allowed max value of {1}", "42", "0"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value -43', function() {
+          var input = fixture('min42max42_1');
+          assert.equal(input.value, "-43", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is lower than allowed min value of {1}", "-43", "-42"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value 43', function() {
+          var input = fixture('min42max42_2');
+          assert.equal(input.value, "43", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is greater than allowed max value of {1}", "43", "42"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value 0', function() {
+          var input = fixture('min42max42_3');
+          assert.equal(input.value, "0", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+      });
+
+      suite('tests where value is set in code', function(){ 
+
+
+        test('min max not set value -42', function() {
+          var input = fixture('propertyTests');
+          input.value = "-42";
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('min max not set value 42', function() {
+          var input = fixture('propertyTests');
+          input.value = "42";
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('min 0, max not set value -42', function() {
+          var input = fixture('propertyTests');
+          input.minValue = "0";
+          input.value = "-42";
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "0", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is lower than allowed min value of {1}", "-42", "0"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min 0, max not set value 42', function() {
+          var input = fixture('propertyTests');
+          input.minValue = "0";
+          input.value = "42";
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "0", 'unexpected min value');
+          assert.equal(input.maxValue, "", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('no min, max 0 value -42', function() {
+          var input = fixture('propertyTests');
+          input.maxValue = "0";
+          input.value = "-42";
+          assert.equal(input.value, "-42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "0", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+        test('no min, max 0 value 42', function() {
+          var input = fixture('propertyTests');
+          input.maxValue = "0";
+          input.value = "42";
+          assert.equal(input.value, "42", 'value not set correctly');
+          assert.equal(input.minValue, "", 'unexpected min value');
+          assert.equal(input.maxValue, "0", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is greater than allowed max value of {1}", "42", "0"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value -43', function() {
+          var input = fixture('propertyTests');
+          input.minValue = "-42";
+          input.maxValue = "42";
+          input.value = "-43";
+          assert.equal(input.value, "-43", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is lower than allowed min value of {1}", "-43", "-42"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value 43', function() {
+          var input = fixture('propertyTests');
+          input.minValue = "-42";
+          input.maxValue = "42";
+          input.value = "43";
+          assert.equal(input.value, "43", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, false, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, input.T("Value {0} is greater than allowed max value of {1}", "43", "42"), "error message not set correctly");
+          assert.equal(input.valid, false, 'element is not invalid');
+        });
+
+        test('min -42, max 42 value 0', function() {
+          var input = fixture('propertyTests');
+          input.minValue = "-42";
+          input.maxValue = "42";
+          input.value = "0";
+          assert.equal(input.value, "0", 'value not set correctly');
+          assert.equal(input.minValue, "-42", 'unexpected min value');
+          assert.equal(input.maxValue, "42", 'unexpected max value');
+          assert.equal(input.valid, true, 'element is invalid');
+
+          input.validate(true);
+          assert.equal(input.$.hint.textContent, "", "error message not set correctly");
+          assert.equal(input.valid, true, 'element is not invalid');
+        });
+
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

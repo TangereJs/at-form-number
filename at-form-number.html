@@ -128,6 +128,30 @@ at-form-number represents an input type=number element on the form
         title: 'Placeholder text'
       },
 
+      /**
+       * Minimum value allowed
+       * 
+       * @property minValue
+       * @type String
+       * @default ""
+       */
+      minValue: {
+        type: String,
+        value: ""        
+      },
+
+      /**
+       * Maximum value allowed
+       * 
+       * @property maxValue
+       * @type String
+       * @default ""
+       */
+      maxValue: {
+        type: String,
+        value: ""
+      }
+
     },
 
     observers: [
