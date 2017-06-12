@@ -214,7 +214,12 @@ at-form-number represents an input type=number element on the form
 
       var inputValue = this.$.input.value;
       if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
-        this.value = inputValue;
+        var parsedValue = parseInt(inputValue);
+        if (!isNaN(parsedValue)) { 
+          this.value = parsedValue;
+        } else {
+          this.value = inputValue;          
+        }
       }
 
       return this._validate(showError);
