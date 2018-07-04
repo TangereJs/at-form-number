@@ -36,7 +36,7 @@ at-form-number represents an input type=number element on the form
   "use strict";
   Polymer({
     is: 'at-form-number',
-    behaviors: [ Tangere.behaviors.i18n,  Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormNumberInputValidation ],
+    behaviors: [Tangere.behaviors.i18n, Tangere.behaviors.formUIGeneric, Tangere.behaviors.AtFormNumberInputValidation],
     properties: {
 
       /**
@@ -137,7 +137,7 @@ at-form-number represents an input type=number element on the form
        */
       minValue: {
         type: String,
-        value: ""        
+        value: ""
       },
 
       /**
@@ -165,8 +165,7 @@ at-form-number represents an input type=number element on the form
     }],
 
     _hideLabelChanged: function(newValue, oldValue) {
-      var label = this.$.label;
-      this.toggleClass("hidden", newValue, label);
+      this.toggleClass("hidden", newValue, this.$.label);
     },
 
     ready: function() {
@@ -205,28 +204,47 @@ at-form-number represents an input type=number element on the form
     },
 
     _internalValidStateUpdate: function(required) {
-      if (this._isReady) {
-        this.validate();
+      if (!this._isReady) return;
+
+      if (this._showErrorsWhenAttached) {
+        this._showErrorsWhenAttached = undefined;
+        this.validate(true);
+        return;
+
+      } else if (this._clearErrorsWhenAttached) {
+        this._clearErrorsWhenAttached = undefined;
+        this.validate(false);
+        return;
       }
+
+      this.validate();
     },
 
-    validate: function (showError) {
+    validate: function(showError) {
+      if (!this.$ && this.autoValidate == false && showError == true) {
+        // showError should be true when _internalValidStateUpdate is called from ready after element is attached
+        this._showErrorsWhenAttached = true;
+
+      } else if (!this.$ && this.autoValidate == true && showError == false) {
+        this._clearErrorsWhenAttached = true;
+      }
+
       if (showError === undefined) { showError = this.autoValidate; }
 
-      var inputValue = this.$.input.value;
+      var inputValue = this.$ ? this.$.input.value : this.value;
       if ((this.value === null && inputValue !== "") || (this.value !== null && this.value !== inputValue)) {
         var parsedValue = parseInt(inputValue);
-        if (!isNaN(parsedValue)) { 
+        if (!isNaN(parsedValue)) {
           this.value = parsedValue;
         } else {
-          this.value = inputValue;          
+          this.value = inputValue;
         }
       }
 
       return this._validate(showError);
     },
 
-    _validate: function (showError) {
+    _validate: function(showError) {
       var validationResult = this._validateBaseData();
       this._handleValidationResult(validationResult);
       if (!validationResult.isValid) {
@@ -234,14 +252,14 @@ at-form-number represents an input type=number element on the form
       }
 
       validationResult = this._validateData(this, this.value, this.T.bind(this));
-      if(showError) this._handleValidationResult(validationResult);
+      if (showError) this._handleValidationResult(validationResult);
 
       return validationResult.isValid;
     },
 
     _updateUIValidState: function(isValid) {
       if (!this.$) return;
-      
+
       var label = this.$.label;
       this.toggleClass('error', !isValid, label);
       var contentContainer = this.$.contentContainer;
@@ -251,17 +269,9 @@ at-form-number represents an input type=number element on the form
     _valueChanged: function(newValue, oldValue) {
       var valueProvider = this.$.input;
 
-      function isString(obj) {
-        return Object.prototype.toString.call(obj) === "[object String]";
-      }
-
-      function isNumber(obj) {
-        return Object.prototype.toString.call(obj) === "[object Number]";
-      }
-
-      if (isNumber(newValue)) {
+      if (this._isNumber(newValue)) {
         valueProvider.value = newValue;
-      } else if (newValue === null || !isString(newValue)) {
+      } else if (newValue === null || !this._isString(newValue)) {
         // if user sets at-form-number.value to null input should display initial value which is empty string
         valueProvider.value = this.properties.value.value;
       } else {
@@ -281,9 +291,18 @@ at-form-number represents an input type=number element on the form
       this.$.input.focus();
     },
 
-    _getFocusableElement: function () {
+    _getFocusableElement: function() {
       var focusable = this.$.input;
       return focusable;
-    }
+    },
+
+    _isString: function(obj) {
+      return Object.prototype.toString.call(obj) === "[object String]";
+    },
+
+    _isNumber: function(obj) {
+      return Object.prototype.toString.call(obj) === "[object Number]";
+    },
+
   });
 </script>
